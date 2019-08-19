@@ -6,6 +6,7 @@ setup(
     description = "Bayesian Vector Autoregressions",
     author = "Joerg Rieger",
     author_email = "joerg.rieger.jr@gmail.com",
+    url = "https://github.com/joergrieger/pybvar.git",
     keywords = ["statistics","vector autoregression","bayes","inference"]
     classifiers = [
         "Programming Language :: Python",
@@ -15,7 +16,7 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Mathematics"
         ],
-    long_description = """pybvar is a package for bayesian vector autoregression. For more information about this package and its usage, visit https://joergrieger/pybvar."""
+    long_description = """pybvar is a package for bayesian vector autoregression. For more information about this package and its usage, visit https://github.com/joergrieger/pybvar."""
  )
         
     
