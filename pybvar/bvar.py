@@ -1,7 +1,6 @@
 import numpy as np
-from scipy.stats import wishart
 
-def lagdata(data, p, intercept) :
+def lagdata(data, p, intercept):
     """ Create lagged data.
     Parameter data: The data to be lagged.
     Parameter p: The number of lags.
@@ -13,22 +12,22 @@ def lagdata(data, p, intercept) :
     nv = data.shape[1]
     
     # check for intercept
-    if intercept == True:
-        constant =1
+    if intercept:
+        constant = 1
     else:
         constant = 0
     
     # create new matrix of the appropriate dimension
     ndim = nv * p + constant
-    laggeddata = np.empty((nl-p-1,ndim))
+    laggeddata = np.empty((nl-p-1, ndim))
     
-    if intercept == True:
+    if intercept:
         laggeddata[:, 0] = 1
     
     for i in range(1, (p+1)):
         ind1 = (i-1)*nv+constant
         ind2 = i*nv+constant
-        laggeddata[:,ind1:ind2] = data[(p-i):(nl-1-i),:]
+        laggeddata[:, ind1:ind2] = data[(p-i):(nl-1-i), :]
     
     return laggeddata
 
@@ -47,7 +46,7 @@ class bvar:
         self.intercept = prior.intercept
         self.nv = prior.nv
         
-        if self.intercept == True:
+        if self.intercept:
             constant = 1
         else:
             constant = 0
@@ -55,8 +54,8 @@ class bvar:
         self.nk = self.nv * self.p + constant
         
         # Store data
-        self.y = data[(self.p+1):,:]
-        self.x = lagdata(data,self.p,self.intercept)
+        self.y = data[(self.p+1):, :]
+        self.x = lagdata(data, self.p, self.intercept)
         
         self.prior = prior
         
@@ -73,27 +72,26 @@ class bvar:
         self.Sigmadraws = np.empty((self.nv, self.nv, int((nreps-burnin)/nthin)))
         
         # Initialize the Gibbs-Sampler
-        draw = self.prior.init_mcmc(self.y,self.x)
-        Alpha = draw[0]
-        Sigma = draw[1]
+        draw = self.prior.init_mcmc(self.y, self.x)
+        alpha = draw[0]
+        sigma = draw[1]
         
         # Gibbs sampling
-        for ireps in range(1,(nreps + 1)):
+        for ireps in range(1, (nreps + 1)):
             
             # print progress
             if ireps % 100 == 0:
                 print(ireps)
             
             # Draw posterior
-            draw = self.prior.draw_posterior(self.y,self.x,Alpha,Sigma)
-            Alpha = draw[0]
-            Sigma = draw[1]
+            draw = self.prior.draw_posterior(self.y, self.x, alpha, sigma)
+            alpha = draw[0]
+            sigma = draw[1]
             
             # Store results
             if ireps > burnin and (ireps-burnin) % nthin == 0:
                 i = int((ireps - burnin)/nthin - 1) 
-                self.Betadraws[:,:,i] = Alpha.reshape((self.nk,self.nv))
-                self.Sigmadraws[:,:,i] = Sigma
-                
-                
-        return(0)
+                self.Betadraws[:, :, i] = alpha.reshape((self.nk, self.nv))
+                self.Sigmadraws[:, :, i] = sigma
+        ret = 0
+        return ret
